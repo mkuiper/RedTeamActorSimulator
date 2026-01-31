@@ -18,6 +18,9 @@ import {
 import { personasApi, providersApi, simulationApi, exportApi, sessionsApi, objectivePresetsApi } from '../../services/api';
 import type { Session, SessionFormData, Persona, Provider } from '../../types';
 import PersonaSelector from '../PersonaSelector';
+import CustomPersonaCreator from '../CustomPersonaCreator';
+import ObjectivePresetSelector from '../ObjectivePresetSelector';
+import Tooltip from '../Tooltip';
 
 interface ConfigPanelProps {
   sessions: Session[];
@@ -161,6 +164,35 @@ export default function ConfigPanel({
         ...updates,
       },
     }));
+  };
+
+  const handleCustomPersonaCreate = async (personaData: any) => {
+    try {
+      await personasApi.create(personaData);
+      // Refetch personas to include the new one
+      window.location.reload(); // Simple refresh for now
+    } catch (error) {
+      console.error('Failed to create persona:', error);
+      alert('Failed to create custom persona');
+    }
+  };
+
+  const handleObjectivePresetSelect = (preset: any) => {
+    const newObjective = {
+      title: preset.title,
+      description: preset.description,
+      completion_criteria: preset.completion_criteria,
+    };
+
+    // Add to existing objectives or replace first empty one
+    const objectives = formData.objectives;
+    if (objectives[0].title === '' && objectives.length === 1) {
+      setFormData({ ...formData, objectives: [newObjective] });
+    } else {
+      setFormData({ ...formData, objectives: [...objectives, newObjective] });
+    }
+
+    setShowObjectivePresets(false);
   };
 
   const getModelOptions = () => {
@@ -330,7 +362,15 @@ export default function ConfigPanel({
             </button>
 
             {expandedSections.persona && (
-              <div className="pl-6">
+              <div className="pl-6 space-y-3">
+                <button
+                  onClick={() => setShowCustomPersonaCreator(true)}
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                >
+                  <Plus className="w-3 h-3" />
+                  Create Custom Persona
+                </button>
+
                 <PersonaSelector
                   personas={modifiedPersonas}
                   selectedId={formData.persona_id}
@@ -427,6 +467,14 @@ export default function ConfigPanel({
 
             {expandedSections.objectives && (
               <div className="space-y-4 pl-6">
+                <button
+                  onClick={() => setShowObjectivePresets(true)}
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
+                >
+                  <Sparkles className="w-3 h-3" />
+                  Load Preset Objective
+                </button>
+
                 {formData.objectives.map((obj, index) => (
                   <div key={index} className="space-y-2 p-3 border border-slate-200 rounded-lg">
                     <div className="flex items-center justify-between">
@@ -525,6 +573,7 @@ export default function ConfigPanel({
                 className="rounded border-slate-300 text-red-600 focus:ring-red-500"
               />
               <span className="text-sm text-slate-700">Enable Sneaky Mode</span>
+              <Tooltip content="Sneaky mode gives the actor access to completion criteria and assessor hints, making attacks more targeted and effective. The actor can see exactly what they're trying to achieve." />
             </label>
           </div>
 
@@ -536,6 +585,23 @@ export default function ConfigPanel({
             Create Session
           </button>
         </div>
+      )}
+
+      {/* Modals */}
+      {showCustomPersonaCreator && (
+        <CustomPersonaCreator
+          onSave={handleCustomPersonaCreate}
+          onCancel={() => setShowCustomPersonaCreator(false)}
+        />
+      )}
+
+      {showObjectivePresets && objectivePresets && objectiveCategories && (
+        <ObjectivePresetSelector
+          presets={objectivePresets}
+          categories={objectiveCategories}
+          onSelect={handleObjectivePresetSelect}
+          onCancel={() => setShowObjectivePresets(false)}
+        />
       )}
     </div>
   );
