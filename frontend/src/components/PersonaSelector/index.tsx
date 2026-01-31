@@ -6,12 +6,14 @@ interface PersonaSelectorProps {
   personas: Persona[];
   selectedId: string;
   onSelect: (personaId: string) => void;
+  onPersonaUpdate?: (personaId: string, updates: Partial<Persona>) => void;
 }
 
 export default function PersonaSelector({
   personas,
   selectedId,
   onSelect,
+  onPersonaUpdate,
 }: PersonaSelectorProps) {
   const [viewMode, setViewMode] = useState<'presets' | 'dimensions'>('presets');
   const selectedPersona = personas.find((p) => p.id === selectedId);
@@ -23,131 +25,190 @@ export default function PersonaSelector({
   const renderDimensionSelector = () => {
     if (!selectedPersona) return null;
 
+    const handleUpdate = (field: keyof Persona, value: any) => {
+      if (onPersonaUpdate) {
+        onPersonaUpdate(selectedPersona.id, { [field]: value });
+      }
+    };
+
     return (
       <div className="space-y-3">
-        {/* Core Dimensions - Horizontal Layout */}
-        <div className="grid grid-cols-3 gap-2">
-          {/* Skill Level */}
-          <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">
-              Skill Level
-            </label>
-            <div className="flex gap-1">
-              {(['novice', 'semi_skilled', 'expert'] as const).map((level) => (
-                <button
-                  key={level}
-                  className={`flex-1 px-2 py-1 text-xs rounded border transition-colors ${
-                    selectedPersona.skill_level === level
-                      ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium'
-                      : 'border-slate-200 bg-white text-slate-600'
-                  }`}
-                  disabled
-                >
-                  {level === 'novice' ? 'Nov' : level === 'semi_skilled' ? 'Semi' : 'Exp'}
-                </button>
-              ))}
-            </div>
+        {/* Skill Level - Horizontal Radio Buttons */}
+        <div>
+          <label className="block text-xs font-medium text-slate-700 mb-2">
+            Skill Level
+          </label>
+          <div className="flex gap-3">
+            {(['novice', 'semi_skilled', 'expert'] as const).map((level) => (
+              <label
+                key={level}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="skill_level"
+                  value={level}
+                  checked={selectedPersona.skill_level === level}
+                  onChange={() => handleUpdate('skill_level', level)}
+                  className="text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-sm text-slate-700">
+                  {level === 'novice' ? 'Novice' : level === 'semi_skilled' ? 'Semi-Skilled' : 'Expert'}
+                </span>
+              </label>
+            ))}
           </div>
+        </div>
 
-          {/* Resources */}
-          <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">
-              Resources
-            </label>
-            <div className="flex gap-1">
-              {(['low', 'medium', 'high'] as const).map((level) => (
-                <button
-                  key={level}
-                  className={`flex-1 px-2 py-1 text-xs rounded border transition-colors ${
-                    selectedPersona.resources === level
-                      ? 'border-green-500 bg-green-50 text-green-700 font-medium'
-                      : 'border-slate-200 bg-white text-slate-600'
-                  }`}
-                  disabled
-                >
+        {/* Resources - Horizontal Radio Buttons */}
+        <div>
+          <label className="block text-xs font-medium text-slate-700 mb-2">
+            Resources
+          </label>
+          <div className="flex gap-3">
+            {(['low', 'medium', 'high'] as const).map((level) => (
+              <label
+                key={level}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="resources"
+                  value={level}
+                  checked={selectedPersona.resources === level}
+                  onChange={() => handleUpdate('resources', level)}
+                  className="text-green-600 focus:ring-green-500"
+                />
+                <span className="text-sm text-slate-700">
                   {level.charAt(0).toUpperCase() + level.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Background */}
-          <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">
-              Background
-            </label>
-            <div className="flex gap-1">
-              {(['technical', 'non_technical'] as const).map((bg) => (
-                <button
-                  key={bg}
-                  className={`flex-1 px-2 py-1 text-xs rounded border transition-colors ${
-                    selectedPersona.background === bg
-                      ? 'border-purple-500 bg-purple-50 text-purple-700 font-medium'
-                      : 'border-slate-200 bg-white text-slate-600'
-                  }`}
-                  disabled
-                >
-                  {bg === 'technical' ? 'Tech' : 'Non-Tech'}
-                </button>
-              ))}
-            </div>
+                </span>
+              </label>
+            ))}
           </div>
         </div>
 
-        {/* Behavioral Attributes - Horizontal */}
-        <div className="grid grid-cols-2 gap-2">
-          {/* Motivation */}
-          {selectedPersona.motivation && (
-            <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
-                Motivation
+        {/* Background - Horizontal Radio Buttons */}
+        <div>
+          <label className="block text-xs font-medium text-slate-700 mb-2">
+            Background
+          </label>
+          <div className="flex gap-3">
+            {(['technical', 'non_technical', 'mixed'] as const).map((bg) => (
+              <label
+                key={bg}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="background"
+                  value={bg}
+                  checked={selectedPersona.background === bg}
+                  onChange={() => handleUpdate('background', bg)}
+                  className="text-purple-600 focus:ring-purple-500"
+                />
+                <span className="text-sm text-slate-700">
+                  {bg === 'technical' ? 'Technical' : bg === 'non_technical' ? 'Non-Technical' : 'Mixed'}
+                </span>
               </label>
-              <div className="px-2 py-1.5 bg-orange-50 border border-orange-200 rounded text-xs text-orange-700 font-medium">
-                {selectedPersona.motivation.replace('_', ' ')}
-              </div>
-            </div>
-          )}
-
-          {/* Communication Style */}
-          {selectedPersona.communication_style && (
-            <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
-                Communication
-              </label>
-              <div className="px-2 py-1.5 bg-indigo-50 border border-indigo-200 rounded text-xs text-indigo-700 font-medium">
-                {selectedPersona.communication_style.replace('_', ' ')}
-              </div>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
 
-        {/* Personality Traits - Compact Grid */}
+        {/* Motivation - Horizontal */}
+        <div>
+          <label className="block text-xs font-medium text-slate-700 mb-2">
+            Motivation
+          </label>
+          <select
+            value={selectedPersona.motivation || ''}
+            onChange={(e) => handleUpdate('motivation', e.target.value)}
+            className="w-full px-3 py-1.5 text-sm border border-slate-300 rounded focus:ring-2 focus:ring-orange-500"
+          >
+            <option value="curiosity">Curiosity</option>
+            <option value="financial">Financial</option>
+            <option value="ideological">Ideological</option>
+            <option value="revenge">Revenge</option>
+            <option value="thrill">Thrill</option>
+            <option value="professional">Professional</option>
+            <option value="academic">Academic</option>
+          </select>
+        </div>
+
+        {/* Communication Style - Horizontal */}
+        <div>
+          <label className="block text-xs font-medium text-slate-700 mb-2">
+            Communication Style
+          </label>
+          <select
+            value={selectedPersona.communication_style || ''}
+            onChange={(e) => handleUpdate('communication_style', e.target.value)}
+            className="w-full px-3 py-1.5 text-sm border border-slate-300 rounded focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="direct">Direct</option>
+            <option value="indirect">Indirect</option>
+            <option value="emotional">Emotional</option>
+            <option value="logical">Logical</option>
+            <option value="manipulative">Manipulative</option>
+            <option value="authoritative">Authoritative</option>
+            <option value="submissive">Submissive</option>
+          </select>
+        </div>
+
+        {/* Persistence Level - Horizontal */}
+        <div>
+          <label className="block text-xs font-medium text-slate-700 mb-2">
+            Persistence Level
+          </label>
+          <div className="flex gap-3">
+            {(['low', 'medium', 'high', 'relentless'] as const).map((level) => (
+              <label
+                key={level}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="persistence_level"
+                  value={level}
+                  checked={selectedPersona.persistence_level === level}
+                  onChange={() => handleUpdate('persistence_level', level)}
+                  className="text-red-600 focus:ring-red-500"
+                />
+                <span className="text-sm text-slate-700">
+                  {level.charAt(0).toUpperCase() + level.slice(1)}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Personality Traits - Editable Sliders */}
         <div className="border-t pt-3">
           <label className="block text-xs font-medium text-slate-700 mb-2">
-            Personality Traits
+            Personality Traits (0-1 scale)
           </label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             {[
               { key: 'patience', label: 'Patience' },
               { key: 'aggression', label: 'Aggression' },
               { key: 'creativity', label: 'Creativity' },
               { key: 'deception', label: 'Deception' },
             ].map((trait) => (
-              <div key={trait.key} className="bg-slate-50 p-2 rounded border border-slate-200">
+              <div key={trait.key}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-medium text-slate-700">{trait.label}</span>
                   <span className="text-xs text-slate-600 font-semibold">
-                    {selectedPersona[trait.key as keyof Persona]?.toFixed(1)}
+                    {(selectedPersona[trait.key as keyof Persona] as number)?.toFixed(1)}
                   </span>
                 </div>
-                <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-red-400 to-red-600 rounded-full"
-                    style={{
-                      width: `${(Number(selectedPersona[trait.key as keyof Persona]) || 0) * 100}%`,
-                    }}
-                  />
-                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={selectedPersona[trait.key as keyof Persona] as number}
+                  onChange={(e) => handleUpdate(trait.key as keyof Persona, parseFloat(e.target.value))}
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-red-600"
+                />
               </div>
             ))}
           </div>

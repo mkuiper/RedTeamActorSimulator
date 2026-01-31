@@ -60,6 +60,9 @@ export default function ConfigPanel({
     objectives: [{ title: '', description: '', completion_criteria: '' }],
   });
 
+  // Track persona modifications
+  const [personaModifications, setPersonaModifications] = useState<Record<string, Partial<Persona>>>({});
+
   const toggleSection = (section: keyof typeof expandedSections) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
@@ -128,6 +131,22 @@ export default function ConfigPanel({
 
   const personas = personasData?.personas || [];
   const providers = providersData?.providers || [];
+
+  // Apply persona modifications
+  const modifiedPersonas = personas.map((p) => ({
+    ...p,
+    ...(personaModifications[p.id] || {}),
+  }));
+
+  const handlePersonaUpdate = (personaId: string, updates: Partial<Persona>) => {
+    setPersonaModifications((prev) => ({
+      ...prev,
+      [personaId]: {
+        ...(prev[personaId] || {}),
+        ...updates,
+      },
+    }));
+  };
 
   const getModelOptions = () => {
     const options: { value: string; label: string; provider: string }[] = [];
@@ -298,9 +317,10 @@ export default function ConfigPanel({
             {expandedSections.persona && (
               <div className="pl-6">
                 <PersonaSelector
-                  personas={personas}
+                  personas={modifiedPersonas}
                   selectedId={formData.persona_id}
                   onSelect={(personaId) => setFormData({ ...formData, persona_id: personaId })}
+                  onPersonaUpdate={handlePersonaUpdate}
                 />
               </div>
             )}
