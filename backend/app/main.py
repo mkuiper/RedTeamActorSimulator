@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.database import init_db
-from app.routers import sessions, simulation, personas, providers, export, objectives
+from app.routers import sessions, simulation, personas, providers, export, objectives, objective_presets
 
 # Configure logging
 settings = get_settings()
@@ -65,6 +65,7 @@ app.include_router(simulation.router, prefix="/api/simulation", tags=["Simulatio
 app.include_router(personas.router, prefix="/api/personas", tags=["Personas"])
 app.include_router(providers.router, prefix="/api/providers", tags=["Providers"])
 app.include_router(objectives.router, prefix="/api/objectives", tags=["Objectives"])
+app.include_router(objective_presets.router, prefix="/api/objective-presets", tags=["Objective Presets"])
 app.include_router(export.router, prefix="/api/export", tags=["Export"])
 
 
