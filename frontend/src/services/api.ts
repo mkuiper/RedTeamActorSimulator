@@ -37,6 +37,24 @@ export const sessionsApi = {
   },
 };
 
+// Objective Presets
+export const objectivePresetsApi = {
+  list: async (): Promise<any[]> => {
+    const response = await api.get('/objective-presets');
+    return response.data;
+  },
+
+  listCategories: async (): Promise<string[]> => {
+    const response = await api.get('/objective-presets/categories');
+    return response.data;
+  },
+
+  getByCategory: async (category: string): Promise<any[]> => {
+    const response = await api.get(`/objective-presets/by-category/${category}`);
+    return response.data;
+  },
+};
+
 // Personas
 export const personasApi = {
   list: async (): Promise<{ personas: Persona[]; total: number }> => {
@@ -46,6 +64,11 @@ export const personasApi = {
 
   get: async (id: string): Promise<Persona> => {
     const response = await api.get(`/personas/${id}`);
+    return response.data;
+  },
+
+  create: async (data: PersonaFormData): Promise<Persona> => {
+    const response = await api.post('/personas', data);
     return response.data;
   },
 

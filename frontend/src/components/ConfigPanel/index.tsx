@@ -12,8 +12,10 @@ import {
   Trash2,
   Download,
   Upload,
+  Plus,
+  Sparkles,
 } from 'lucide-react';
-import { personasApi, providersApi, simulationApi, exportApi, sessionsApi } from '../../services/api';
+import { personasApi, providersApi, simulationApi, exportApi, sessionsApi, objectivePresetsApi } from '../../services/api';
 import type { Session, SessionFormData, Persona, Provider } from '../../types';
 import PersonaSelector from '../PersonaSelector';
 
@@ -49,6 +51,16 @@ export default function ConfigPanel({
     queryFn: providersApi.list,
   });
 
+  const { data: objectivePresets } = useQuery({
+    queryKey: ['objective-presets'],
+    queryFn: objectivePresetsApi.list,
+  });
+
+  const { data: objectiveCategories } = useQuery({
+    queryKey: ['objective-categories'],
+    queryFn: objectivePresetsApi.listCategories,
+  });
+
   const [formData, setFormData] = useState<SessionFormData>({
     name: '',
     max_turns: 20,
@@ -62,6 +74,9 @@ export default function ConfigPanel({
 
   // Track persona modifications
   const [personaModifications, setPersonaModifications] = useState<Record<string, Partial<Persona>>>({});
+  const [showCustomPersonaCreator, setShowCustomPersonaCreator] = useState(false);
+  const [showObjectivePresets, setShowObjectivePresets] = useState(false);
+  const [selectedPresetCategory, setSelectedPresetCategory] = useState<string>('all');
 
   const toggleSection = (section: keyof typeof expandedSections) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
