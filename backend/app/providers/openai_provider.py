@@ -73,6 +73,44 @@ class OpenAIProvider(BaseProvider):
         """List available OpenAI models."""
         # Return commonly used models
         return [
+            # GPT-5 Family (Latest)
+            ModelInfo(
+                id="gpt-5.2",
+                name="GPT-5.2",
+                description="Flagship reasoning model with variable effort levels",
+                context_window=200000,
+            ),
+            ModelInfo(
+                id="gpt-5",
+                name="GPT-5",
+                description="Developer-focused model for coding and agents",
+                context_window=200000,
+            ),
+            ModelInfo(
+                id="gpt-5-mini",
+                name="GPT-5 Mini",
+                description="Smaller, faster GPT-5 variant",
+                context_window=128000,
+            ),
+            # O-Series Reasoning Models
+            ModelInfo(
+                id="o3-pro",
+                name="o3-pro",
+                description="Most advanced reasoning model",
+                context_window=200000,
+            ),
+            ModelInfo(
+                id="o3",
+                name="o3",
+                description="Advanced reasoning model",
+                context_window=200000,
+            ),
+            ModelInfo(
+                id="o3-mini",
+                name="o3-mini",
+                description="Efficient reasoning model",
+                context_window=128000,
+            ),
             ModelInfo(
                 id="o1",
                 name="o1",
@@ -85,22 +123,29 @@ class OpenAIProvider(BaseProvider):
                 description="Faster reasoning model",
                 context_window=128000,
             ),
+            # GPT-4 Family
+            ModelInfo(
+                id="gpt-4.5",
+                name="GPT-4.5",
+                description="High EQ model, excellent at creative tasks and agentic planning",
+                context_window=128000,
+            ),
+            ModelInfo(
+                id="gpt-4.1",
+                name="GPT-4.1",
+                description="Specialized for coding tasks and precise instruction following",
+                context_window=128000,
+            ),
             ModelInfo(
                 id="gpt-4o",
                 name="GPT-4o",
-                description="Most capable GPT-4 model with vision",
+                description="Multimodal model with vision and audio support",
                 context_window=128000,
             ),
             ModelInfo(
                 id="gpt-4o-mini",
                 name="GPT-4o Mini",
                 description="Fast and cost-effective",
-                context_window=128000,
-            ),
-            ModelInfo(
-                id="gpt-4-turbo",
-                name="GPT-4 Turbo",
-                description="Previous generation GPT-4 with large context",
                 context_window=128000,
             ),
         ]

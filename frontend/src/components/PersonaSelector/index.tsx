@@ -24,162 +24,123 @@ export default function PersonaSelector({
     if (!selectedPersona) return null;
 
     return (
-      <div className="space-y-4">
-        {/* Skill Level */}
-        <div>
-          <label className="block text-xs font-medium text-slate-700 mb-2 flex items-center gap-1">
-            <Sliders className="w-3 h-3" />
-            Skill Level
-          </label>
-          <div className="space-y-1">
-            {(['novice', 'semi_skilled', 'expert'] as const).map((level) => (
-              <label
-                key={level}
-                className={`flex items-center gap-2 p-2 rounded border cursor-pointer transition-colors ${
-                  selectedPersona.skill_level === level
-                    ? 'border-red-500 bg-red-50'
-                    : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="skill_level"
-                  value={level}
-                  checked={selectedPersona.skill_level === level}
-                  readOnly
-                  className="text-red-600 focus:ring-red-500"
-                />
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-slate-900">
-                    {level.replace('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
-                  </div>
-                  <div className="text-xs text-slate-500">
-                    {level === 'novice' && 'Limited knowledge, asks basic questions'}
-                    {level === 'semi_skilled' && 'Moderate expertise, knows terminology'}
-                    {level === 'expert' && 'Advanced skills, sophisticated approaches'}
-                  </div>
-                </div>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Resources */}
-        <div>
-          <label className="block text-xs font-medium text-slate-700 mb-2">Resources</label>
-          <div className="space-y-1">
-            {(['low', 'medium', 'high'] as const).map((level) => (
-              <label
-                key={level}
-                className={`flex items-center gap-2 p-2 rounded border cursor-pointer transition-colors ${
-                  selectedPersona.resources === level
-                    ? 'border-red-500 bg-red-50'
-                    : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="resources"
-                  value={level}
-                  checked={selectedPersona.resources === level}
-                  readOnly
-                  className="text-red-600 focus:ring-red-500"
-                />
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-slate-900">
-                    {level.charAt(0).toUpperCase() + level.slice(1)}
-                  </div>
-                  <div className="text-xs text-slate-500">
-                    {level === 'low' && 'Limited tools and time'}
-                    {level === 'medium' && 'Some tools and resources available'}
-                    {level === 'high' && 'Well-resourced, advanced tools'}
-                  </div>
-                </div>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Background */}
-        <div>
-          <label className="block text-xs font-medium text-slate-700 mb-2">Background</label>
-          <div className="space-y-1">
-            {(['technical', 'non_technical'] as const).map((bg) => (
-              <label
-                key={bg}
-                className={`flex items-center gap-2 p-2 rounded border cursor-pointer transition-colors ${
-                  selectedPersona.background === bg
-                    ? 'border-red-500 bg-red-50'
-                    : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="background"
-                  value={bg}
-                  checked={selectedPersona.background === bg}
-                  readOnly
-                  className="text-red-600 focus:ring-red-500"
-                />
-                <div className="flex-1">
-                  <div className="text-sm font-medium text-slate-900">
-                    {bg.replace('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
-                  </div>
-                  <div className="text-xs text-slate-500">
-                    {bg === 'technical' && 'Understands code and systems'}
-                    {bg === 'non_technical' && 'Social engineering focus'}
-                  </div>
-                </div>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Motivation */}
-        {selectedPersona.motivation && (
+      <div className="space-y-3">
+        {/* Core Dimensions - Horizontal Layout */}
+        <div className="grid grid-cols-3 gap-2">
+          {/* Skill Level */}
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-2 flex items-center gap-1">
-              <Lightbulb className="w-3 h-3" />
-              Motivation
+            <label className="block text-xs font-medium text-slate-700 mb-1">
+              Skill Level
             </label>
-            <div className="p-2 bg-slate-50 rounded border border-slate-200 text-sm text-slate-700">
-              {selectedPersona.motivation.replace('_', ' ')}
+            <div className="flex gap-1">
+              {(['novice', 'semi_skilled', 'expert'] as const).map((level) => (
+                <button
+                  key={level}
+                  className={`flex-1 px-2 py-1 text-xs rounded border transition-colors ${
+                    selectedPersona.skill_level === level
+                      ? 'border-blue-500 bg-blue-50 text-blue-700 font-medium'
+                      : 'border-slate-200 bg-white text-slate-600'
+                  }`}
+                  disabled
+                >
+                  {level === 'novice' ? 'Nov' : level === 'semi_skilled' ? 'Semi' : 'Exp'}
+                </button>
+              ))}
             </div>
           </div>
-        )}
 
-        {/* Communication Style */}
-        {selectedPersona.communication_style && (
+          {/* Resources */}
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-2">
-              Communication Style
+            <label className="block text-xs font-medium text-slate-700 mb-1">
+              Resources
             </label>
-            <div className="p-2 bg-slate-50 rounded border border-slate-200 text-sm text-slate-700">
-              {selectedPersona.communication_style.replace('_', ' ')}
+            <div className="flex gap-1">
+              {(['low', 'medium', 'high'] as const).map((level) => (
+                <button
+                  key={level}
+                  className={`flex-1 px-2 py-1 text-xs rounded border transition-colors ${
+                    selectedPersona.resources === level
+                      ? 'border-green-500 bg-green-50 text-green-700 font-medium'
+                      : 'border-slate-200 bg-white text-slate-600'
+                  }`}
+                  disabled
+                >
+                  {level.charAt(0).toUpperCase() + level.slice(1)}
+                </button>
+              ))}
             </div>
           </div>
-        )}
 
-        {/* Personality Sliders */}
-        <div className="border-t pt-4">
-          <label className="block text-xs font-medium text-slate-700 mb-3">
-            Personality Traits (0-1 scale)
+          {/* Background */}
+          <div>
+            <label className="block text-xs font-medium text-slate-700 mb-1">
+              Background
+            </label>
+            <div className="flex gap-1">
+              {(['technical', 'non_technical'] as const).map((bg) => (
+                <button
+                  key={bg}
+                  className={`flex-1 px-2 py-1 text-xs rounded border transition-colors ${
+                    selectedPersona.background === bg
+                      ? 'border-purple-500 bg-purple-50 text-purple-700 font-medium'
+                      : 'border-slate-200 bg-white text-slate-600'
+                  }`}
+                  disabled
+                >
+                  {bg === 'technical' ? 'Tech' : 'Non-Tech'}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Behavioral Attributes - Horizontal */}
+        <div className="grid grid-cols-2 gap-2">
+          {/* Motivation */}
+          {selectedPersona.motivation && (
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">
+                Motivation
+              </label>
+              <div className="px-2 py-1.5 bg-orange-50 border border-orange-200 rounded text-xs text-orange-700 font-medium">
+                {selectedPersona.motivation.replace('_', ' ')}
+              </div>
+            </div>
+          )}
+
+          {/* Communication Style */}
+          {selectedPersona.communication_style && (
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">
+                Communication
+              </label>
+              <div className="px-2 py-1.5 bg-indigo-50 border border-indigo-200 rounded text-xs text-indigo-700 font-medium">
+                {selectedPersona.communication_style.replace('_', ' ')}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Personality Traits - Compact Grid */}
+        <div className="border-t pt-3">
+          <label className="block text-xs font-medium text-slate-700 mb-2">
+            Personality Traits
           </label>
-          <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-2">
             {[
-              { key: 'patience', label: 'Patience', desc: 'Persistence with one approach' },
-              { key: 'aggression', label: 'Aggression', desc: 'Forcefulness/demand level' },
-              { key: 'creativity', label: 'Creativity', desc: 'Novel approach willingness' },
-              { key: 'deception', label: 'Deception', desc: 'Tendency to mislead' },
+              { key: 'patience', label: 'Patience' },
+              { key: 'aggression', label: 'Aggression' },
+              { key: 'creativity', label: 'Creativity' },
+              { key: 'deception', label: 'Deception' },
             ].map((trait) => (
-              <div key={trait.key}>
+              <div key={trait.key} className="bg-slate-50 p-2 rounded border border-slate-200">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-xs font-medium text-slate-700">{trait.label}</span>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-slate-600 font-semibold">
                     {selectedPersona[trait.key as keyof Persona]?.toFixed(1)}
                   </span>
                 </div>
-                <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-red-400 to-red-600 rounded-full"
                     style={{
@@ -187,7 +148,6 @@ export default function PersonaSelector({
                     }}
                   />
                 </div>
-                <div className="text-xs text-slate-500 mt-0.5">{trait.desc}</div>
               </div>
             ))}
           </div>
