@@ -43,24 +43,23 @@ A framework for testing AI model safety and robustness through simulated adversa
 ### Backend Setup
 
 ```bash
-cd backend
+# From the repo root, set up environment variables
+cp .env.example .env
+nano .env  # Edit with your API keys
 
 # Create virtual environment
+cd backend
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Copy environment template
-cp .env.example .env
-
-# Edit .env with your API keys
-nano .env
-
 # Run the server
 uvicorn app.main:app --reload
 ```
+
+For the start scripts, `HOST`, `PORT`, and `DEBUG` are read from the root `.env` (defaults: `0.0.0.0`, `8000`, `false`).
 
 ### Frontend Setup
 
@@ -81,7 +80,7 @@ npm run dev
 
 ## Configuration
 
-Edit `backend/.env` to configure:
+Edit `.env` (repo root) to configure:
 
 ```env
 # AI Provider API Keys

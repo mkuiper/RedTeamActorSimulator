@@ -19,6 +19,22 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
+load_env() {
+    if [ -f ".env" ]; then
+        set -a
+        # shellcheck disable=SC1091
+        source ".env"
+        set +a
+    fi
+}
+
+is_true() {
+    case "${1,,}" in
+        true|1|yes|y) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
 # Check if .env exists
 if [ ! -f ".env" ]; then
     echo -e "${YELLOW}Warning: .env file not found!${NC}"
@@ -34,6 +50,15 @@ if [ ! -f ".env" ]; then
     echo "  - OLLAMA_BASE_URL (for local models)"
     echo ""
     read -p "Press Enter to continue after editing .env, or Ctrl+C to exit..."
+fi
+
+load_env
+
+HOST_VALUE="${HOST:-0.0.0.0}"
+PORT_VALUE="${PORT:-8000}"
+RELOAD_FLAG="--reload"
+if ! is_true "${DEBUG:-}"; then
+    RELOAD_FLAG=""
 fi
 
 # Check if backend venv exists
@@ -76,7 +101,7 @@ trap cleanup SIGINT SIGTERM
 echo -e "${GREEN}Starting backend API...${NC}"
 cd backend
 source venv/bin/activate
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload > ../backend.log 2>&1 &
+python -m uvicorn app.main:app --host "$HOST_VALUE" --port "$PORT_VALUE" $RELOAD_FLAG > ../backend.log 2>&1 &
 BACKEND_PID=$!
 cd ..
 
@@ -88,7 +113,7 @@ if ! kill -0 $BACKEND_PID 2>/dev/null; then
     echo -e "${RED}✗ Backend failed to start. Check backend.log for errors.${NC}"
     exit 1
 fi
-echo -e "${GREEN}✓ Backend running on http://localhost:8000${NC}"
+echo -e "${GREEN}✓ Backend running on http://localhost:${PORT_VALUE}${NC}"
 
 # Start frontend
 echo -e "${GREEN}Starting frontend UI...${NC}"
@@ -114,8 +139,8 @@ echo -e "${GREEN}Application is running!${NC}"
 echo "========================================="
 echo ""
 echo "Frontend UI:  http://localhost:5173"
-echo "Backend API:  http://localhost:8000"
-echo "API Docs:     http://localhost:8000/docs"
+echo "Backend API:  http://localhost:${PORT_VALUE}"
+echo "API Docs:     http://localhost:${PORT_VALUE}/docs"
 echo ""
 echo "Logs:"
 echo "  Backend:  tail -f backend.log"

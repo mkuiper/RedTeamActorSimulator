@@ -14,6 +14,8 @@ This will:
 - Start both backend and frontend
 - Show you the URLs to access
 
+The backend uses `HOST`, `PORT`, and `DEBUG` from `.env` (with defaults of `0.0.0.0`, `8000`, and `false`).
+
 ### Option 2: Start Services Separately
 
 **Terminal 1 - Backend:**
@@ -39,6 +41,13 @@ This will:
    ANTHROPIC_API_KEY=sk-ant-your-key-here
    GOOGLE_API_KEY=your-google-key-here
    OLLAMA_BASE_URL=http://localhost:11434  # For local models
+   ```
+
+   Optional backend settings:
+   ```bash
+   HOST=0.0.0.0
+   PORT=8000
+   DEBUG=true  # Enables auto-reload
    ```
 
 2. **Run the application**
